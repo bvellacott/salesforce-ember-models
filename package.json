@@ -1,6 +1,6 @@
 {
   "name": "salesforce-ember-models",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "The default blueprint for ember-cli addons.",
   "directories": {
     "doc": "doc",
@@ -43,7 +43,9 @@
     "ember-addon"
   ],
   "dependencies": {
-    "ember-cli-babel": "^5.1.6"
+    "ember-browserify": "^1.1.12",
+    "ember-cli-babel": "^5.1.6",
+    "salesforce-schema-reader": "^1.0.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"

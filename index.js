@@ -2,5 +2,5 @@
 'use strict';
 
 module.exports = {
-  name: 'salesforce-ember-models'
+  name: 'ember-salesforce-adapter'
 };

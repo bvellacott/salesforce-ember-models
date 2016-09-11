@@ -363,7 +363,7 @@ SFModels = SF = {
     // all the salesforce object definitions are converted into ember models
     // !DEPRECATED!
   createEmberModels : function(typeFilter, cb) {
-		var w = new SF.SchemaReader(100, function(){ 
+		var w = new SchemaReader(100, function(){ 
 	    	if(typeof App === 'undefined')
 	    		App = Ember.Application.create({});
 			SF.createModelsForSObjects(App, w.completeMetas, w, typeFilter);
@@ -379,7 +379,7 @@ SFModels = SF = {
     // See the createModelsForSObjects method for the typeFilter definition. If the typeFilter isn't used 
     // all the salesforce object definitions are converted into ember models.
 	downloadEmberModels : function(typeFilter){
-		var w = new SF.SchemaReader(100, function(){ 
+		var w = new SchemaReader(100, function(){ 
 			var serialised = JSON.stringify(SF.createEmberModelDefinitions(w.completeMetas, w, typeFilter), null, 1);
 			window.open('data:text/plain,' + encodeURIComponent('var modelDefinitions = ' + serialised + ';'));
 		});

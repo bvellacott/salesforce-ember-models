@@ -30,7 +30,7 @@ var SFModels = SF = {
 	},
 	emberiseRefs(refs) {
 		if(typeof refs === 'string') return SF.emberiseExtension(refs);
-		else if($.isArray(refs)) {
+		else if(Array.isArray(refs)) {
 			var emberRefs = [];
 			for(var i = 0; i < refs.length; i++)
 				emberRefs.push(SF.emberiseExtension(refs[i]));
@@ -41,7 +41,7 @@ var SFModels = SF = {
 	},
 	sfriseRefs(refs) {
 		if(typeof refs === 'string') return SF.sfriseExtension(refs);
-		else if($.isArray(refs)) {
+		else if(Array.isArray(refs)) {
 			var sfRefs = [];
 			for(var i = 0; i < refs.length; i++)
 				sfRefs.push(SF.sfriseExtension(refs[i]));
@@ -189,7 +189,7 @@ var SFModels = SF = {
 						else
 							modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : null })";
 					}
-					else if($.isArray(field.referenceTo)){
+					else if(Array.isArray(field.referenceTo)){
 						cache.logMultitypedReferenceField(sObjectName, fn)
 						modelExtension[fn] = "DS.attr('string', { multiRef : true, updateable : " + updateable + " })";
 					}
@@ -284,7 +284,7 @@ var SFModels = SF = {
 	formatPayload(type, pl) {
 		var formattedPl = {};
 		var plural = Em.Inflector.inflector.pluralize(type.modelName);
-		if($.isArray(pl.records)) {
+		if(Array.isArray(pl.records)) {
 			for(var i = 0; i < pl.records.length; i++)
 				SF.formatRecord(pl.records[i]);
 			formattedPl[plural] = pl.records;
@@ -316,7 +316,7 @@ var SFModels = SF = {
 	// result, into an id array expected by the ember rest adapter.
 	formatToIdArray(records) {
 		var idArr = [];
-		if($.isArray(records))
+		if(Array.isArray(records))
 			for(var i = 0; i < records.length; i++)
 				idArr.push(records[i].Id)
 		else

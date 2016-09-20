@@ -69,5 +69,85 @@ module.exports = function(test, SFModels) {
 
 		if(typeof t.end === 'function') t.end();
 	});
+
+	test( "SFModels.hasCustomSfRelationExtension()", function( t ) {
+		t.strictEqual( SFModels.hasCustomSfRelationExtension('someName__r'), true, "valid ending '__r'" );
+		t.strictEqual( SFModels.hasCustomSfRelationExtension('someName__r_'), false, "invalid ending '__r_'" );
+		t.strictEqual( SFModels.hasCustomSfRelationExtension('someName'), false, "no ending" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.hasCustomSfRelationExtension()", function( t ) {
+		t.strictEqual( SFModels.hasCustomSfNameExtension('someName__c'), true, "valid ending '__c'" );
+		t.strictEqual( SFModels.hasCustomSfNameExtension('someName__c_'), false, "invalid ending '__c_'" );
+		t.strictEqual( SFModels.hasCustomSfNameExtension('someName'), false, "no ending" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.hasCustomEmberRelationExtension()", function( t ) {
+		t.strictEqual( SFModels.hasCustomEmberRelationExtension('someNamerrr'), true, "valid ending 'rrr'" );
+		t.strictEqual( SFModels.hasCustomEmberRelationExtension('someNamerrr_'), false, "invalid ending 'rrr_'" );
+		t.strictEqual( SFModels.hasCustomEmberRelationExtension('someName'), false, "no ending" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.hasCustomEmberNameExtension()", function( t ) {
+		t.strictEqual( SFModels.hasCustomEmberNameExtension('someNameccc'), true, "valid ending 'ccc'" );
+		t.strictEqual( SFModels.hasCustomEmberNameExtension('someNameccc_'), false, "invalid ending 'ccc_'" );
+		t.strictEqual( SFModels.hasCustomEmberNameExtension('someName'), false, "no ending" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.emberiseExtension()", function( t ) {
+		t.equal( SFModels.emberiseExtension('someName__c'), 'someNameccc', "Ending '__c' conversion to 'ccc'" );
+		t.equal( SFModels.emberiseExtension('someName__r'), 'someNamerrr', "Ending '__r' conversion to 'rrr'" );
+		t.equal( SFModels.emberiseExtension('someName__a'), 'someName__a', "Any other ending shouldn't be converted" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.sfriseExtension()", function( t ) {
+		t.equal( SFModels.sfriseExtension('someNameccc'), 'someName__c', "Ending 'ccc' conversion to '__c'" );
+		t.equal( SFModels.sfriseExtension('someNamerrr'), 'someName__r', "Ending 'rrr' conversion to '__r'" );
+		t.equal( SFModels.sfriseExtension('someNameaaa'), 'someNameaaa', "Any other ending shouldn't be converted" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.emberiseRefs()", function( t ) {
+		t.equal( SFModels.emberiseRefs('someName__c'), 'someNameccc', "Ending '__c' conversion to 'ccc'" );
+		t.equal( SFModels.emberiseRefs('someName__r'), 'someNamerrr', "Ending '__r' conversion to 'rrr'" );
+		t.equal( SFModels.emberiseRefs('someName__a'), 'someName__a', "Any other ending shouldn't be converted" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.sfriseRefs()", function( t ) {
+		t.equal( SFModels.sfriseRefs('someNameccc'), 'someName__c', "Ending 'ccc' conversion to '__c'" );
+		t.equal( SFModels.sfriseRefs('someNamerrr'), 'someName__r', "Ending 'rrr' conversion to '__r'" );
+		t.equal( SFModels.sfriseRefs('someNameaaa'), 'someNameaaa', "Any other ending shouldn't be converted" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.emberiseRefs()", function( t ) {
+		t.deepEqual( SFModels.emberiseRefs(['someName__c', 'someName__r', 'someName__a']), ['someNameccc', 'someNamerrr', 'someName__a'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+		t.deepEqual( SFModels.emberiseRefs(['someName__r', 'someName__a', 'someName__c']), ['someNamerrr', 'someName__a', 'someNameccc'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+		t.deepEqual( SFModels.emberiseRefs(['someName__a', 'someName__c', 'someName__r']), ['someName__a', 'someNameccc', 'someNamerrr'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+
+		if(typeof t.end === 'function') t.end();
+	});
+
+	test( "SFModels.sfriseRefs()", function( t ) {
+		t.deepEqual( SFModels.sfriseRefs(['someNameccc', 'someNamerrr', 'someNameaaa']), ['someName__c', 'someName__r', 'someNameaaa'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
+		t.deepEqual( SFModels.sfriseRefs(['someNamerrr', 'someNameaaa', 'someNameccc']), ['someName__r', 'someNameaaa', 'someName__c'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
+		t.deepEqual( SFModels.sfriseRefs(['someNameaaa', 'someNameccc', 'someNamerrr']), ['someNameaaa', 'someName__c', 'someName__r'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
+
+		if(typeof t.end === 'function') t.end();
+	});	
 }
 

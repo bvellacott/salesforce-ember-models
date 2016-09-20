@@ -1,6 +1,1 @@
-/* jshint node: true */
-'use strict';
-
-module.exports = {
-  name: 'ember-salesforce-adapter'
-};
+module.exports = require('./dist/sf-models-node.js');

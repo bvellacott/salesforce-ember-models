@@ -1,4 +1,3 @@
-// var browserify = require('broccoli-browserify')
 var uglify = require('broccoli-uglify-sourcemap')
 var esTranspiler = require('broccoli-babel-transpiler')
 var pickFiles = require('broccoli-funnel')
@@ -6,6 +5,22 @@ var mergeTrees = require('broccoli-merge-trees')
 var concat = require('broccoli-concat');
 var env = require('broccoli-env').getEnv()
 var rename = require('broccoli-stew').rename;
+var watchify = require('broccoli-watchify');
+var log = require('broccoli-stew').log;
+var debug = require('broccoli-stew').debug;
+var exportTree = require('broccoli-export-tree');
+ 
+var watchifyBrowserOpts = {
+  browserify: { entries: ['./browserEntry.js'], debug: true },
+  outputFile: 'sf-models.js',
+  cache: true,
+};
+
+var watchifyUglyBrowserOpts = {
+  browserify: { entries: ['./browserEntry.js'], debug: false },
+  outputFile: 'sf-models-min.js',
+  cache: true,
+};
 
 // Tests
 var testsStatic = pickFiles('./tests', {
@@ -31,48 +46,33 @@ tests = concat(tests, {
 });
 
 var tool = pickFiles('./dev', {
-  include: ['sf-models.js'],
+  include: ['sf-models.js', 'browserEntry.js'],
   destDir: '.'
 });
 
 tool = esTranspiler(tool);
+
 nodeTool = rename(tool, 'sf-models.js', 'sf-models-node.js');
 
-tool = mergeTrees([
-  tool,
-  pickFiles('./dev', {
-    include: ['browserHeader.js', 'browserFooter.js'],
-    destDir: '.'
-  })
-]);
+var uglifiedTool = watchify(tool, watchifyUglyBrowserOpts);
+uglifiedTool = rename(uglifiedTool, 'sf-models.js', 'sf-models-min.js');
+uglifiedTool = uglify(uglifiedTool, { mangle: true, compress: true });
 
-tool = concat(tool, {
-  header: "(function(){",
-  headerFiles: ['./browserHeader.js'],
-  outputFile: './sf-models.js',
-  footerFiles: ['./browserFooter.js'],
-  footer: "})();",
-  inputFiles: ['./sf-models.js'],
-  sourceMapConfig: { enabled: true },
-});
+tool = watchify(tool, watchifyBrowserOpts);
 
-tool = pickFiles(tool, {
-  include: ['sf-models.js', 'sf-models.map'],
-});
-
-var toolMin = rename(tool, 'sf-models.js', 'sf-models-min.js');
-
-toolMin = uglify(toolMin, {
-   mangle: true,
-   compress: true
-});
+tool = pickFiles(tool, { include: ['sf-models.js'] });
+uglifiedTool = pickFiles(uglifiedTool, { include: ['sf-models-min.js'] });
 
 var all = mergeTrees([
-  toolMin,
+  uglifiedTool,
   tool,
   nodeTool,
   tests,
   testsStatic
 ]);
 
-module.exports = all;
+var dist = exportTree(all, {
+  destDir: 'dist'
+});
+
+module.exports = mergeTrees([dist, all]);

@@ -1,5 +1,7 @@
 // import Ember from 'ember';
-import DS from 'ember-data';
+// import DS from 'ember-data';
+// import SchemaReader from 'salesforce-schema-reader';
+// var DS = require('ember-data');
 import SchemaReader from 'salesforce-schema-reader';
 
 var SF;
@@ -421,7 +423,7 @@ SFModels.factory = {
 			if(typeof map === 'undefined' || map == null) {
 				map = {};
 				that.inversFields[objectName] = map;
-			}
+			} 
 			return map;
 		};
 		this.logInverses = (objectName, field1Name, field2Name) => {

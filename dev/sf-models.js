@@ -70,7 +70,6 @@ var SFModels = SF = {
 		picklist : 'string',
 		multipicklist : 'string',
 		textarea : 'string',
-		encryptedstring : 'string',
 		url : 'string',
 		address : 'string',
 		calculated : 'string',

@@ -1,4 +1,4 @@
-module.exports = function(test, SFModels) {
+// module.exports = function(test, SFModels) {
 
 	// the schema fixture data
 	var schema = {
@@ -63,12 +63,6 @@ module.exports = function(test, SFModels) {
 		// reader.isFetching = false;
 		// return reader;
 	}
-
-	test( "tests are running", ( t ) => {
-		t.ok(true,'test executed');
-
-		if(typeof t.end === 'function') t.end();
-	});
 
 	test( "SFModels.hasCustomSfRelationExtension()", function( t ) {
 		t.strictEqual( SFModels.hasCustomSfRelationExtension('someName__r'), true, "valid ending '__r'" );
@@ -149,5 +143,5 @@ module.exports = function(test, SFModels) {
 
 		if(typeof t.end === 'function') t.end();
 	});	
-}
+// }
 

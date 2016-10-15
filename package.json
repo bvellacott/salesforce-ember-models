@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "./build",
-    "test": "node tests/testRunner.js"
+    "serve": "broccoli serve",
+    "test": "node runTests.js"
   },
   "repository": "https://github.com/bvellacott/salesforce-ember-models",
   "engines": {
@@ -17,10 +17,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "babelify": "^7.3.0",
     "broccoli": "^0.16.9",
     "broccoli-babel-transpiler": "^5.5.0",
-    "broccoli-concat": "^2.2.0",
     "broccoli-env": "0.0.1",
     "broccoli-es6modules": "^1.2.2",
     "broccoli-export-tree": "^0.3.2",
@@ -30,7 +28,7 @@
     "broccoli-uglify-sourcemap": "^1.4.0",
     "broccoli-watchify": "^1.0.0",
     "ember-cli": "^2.5.0",
-    "tap": "^5.8.0"
+    "qunit": "^0.9.1"
   },
   "dependencies": {
     "salesforce-schema-reader": "^1.0.2"

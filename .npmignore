@@ -7,3 +7,7 @@
 .gitignore
 bower.json
 Broccoli.js
+
+
+#test code coverage
+/coverage

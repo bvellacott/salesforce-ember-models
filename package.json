@@ -28,7 +28,8 @@
     "broccoli-uglify-sourcemap": "^1.4.0",
     "broccoli-watchify": "^1.0.0",
     "ember-cli": "^2.5.0",
-    "qunit": "^0.9.1"
+    "qunit": "^0.9.1",
+    "sforce-mocks": "^1.0.0"
   },
   "dependencies": {
     "salesforce-schema-reader": "^1.0.2"

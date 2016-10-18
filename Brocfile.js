@@ -22,24 +22,33 @@ var watchifyUglyBrowserOpts = {
 };
 
 var watchifyBrowserTestsOpts = {
-  browserify: { entries: ['./testRunner.js'], debug: true },
+  browserify: { entries: ['./tests.js'], debug: true },
   outputFile: 'tests.js',
   cache: true,
 };
 
+var testsStatic = pickFiles('./tests', {
+  include: ['tests.html', 'tests-min.html'],
+  destDir: '.'
+});
+
 var tests = pickFiles('./tests', {
-  include: ['tests.js', 'tests.html', 'tests-min.html'],
+  include: ['tests.js'],
   destDir: '.'
 });
 
 var qunit = pickFiles('./node_modules/qunitjs/qunit', {
-  // include: ['tests.js', 'testRunner.js', 'tests.html', 'tests-min.html','browserTestHeader.js','browserTestFooter.js'],
   include: ['qunit.js', 'qunit.css'],
   destDir: './qunit'
 });
 
+var deps = mergeTrees([
+  pickFiles('./tests/deps', { destDir: './deps'}),
+  pickFiles('node_modules/ember-data/ember-data', { include: ['ember-data.js'], destDir: './deps'})
+]);
 
 tests = esTranspiler(tests);
+tests = watchify(tests, watchifyBrowserTestsOpts);
 
 var tool = pickFiles('./dev', {
   include: ['sf-models.js', 'browserEntry.js'],
@@ -62,6 +71,8 @@ var all = mergeTrees([
   tool,
   nodeTool,
   tests,
+  testsStatic,
+  deps,
   qunit
 ]);
 

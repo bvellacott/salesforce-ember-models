@@ -37,7 +37,7 @@ testrunner.setup(
     deps: null,
  
     // define namespace your code will be attached to on global['your namespace'] 
-    namespace: null,
+    namespace: 'SFModels',
  
     // max amount of ms child can be blocked, after that we assume running an infinite loop 
     maxBlockDuration: 2000
@@ -45,6 +45,8 @@ testrunner.setup(
 
 // one code and tests file 
 testrunner.run({
+    deps: [{path: 'ember-data', namespace: "DS"}, 'mocks'/*{path: 'mocks', namespace: 'mocks'}*/],
+    // deps: {path: 'ember-data', namespace: "DS"},
     code: { path: "dist/sf-models-node.js", namespace: 'SFModels'},
     tests: "tests/tests.js"
 }, function(){ console.log('done'); });

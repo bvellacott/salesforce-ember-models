@@ -1,11 +1,13 @@
 // import Ember from 'ember';
 // import DS from 'ember-data';
 // import SchemaReader from 'salesforce-schema-reader';
-// var DS = require('ember-data');
+// import DS from 'ember-data';
 import SchemaReader from 'salesforce-schema-reader';
 
-var SF;
-var SFModels = SF = {
+var SF; 
+var SFModels = SF = { 
+	sforce: window.sforce ? window.sforce : undefined,
+	SchemaReader: SchemaReader,
 	// Constants and methods for salesforce custom entity ending handling and conversions
 	_sfRelExt : '__r',
 	_sfNameExt : '__c',
@@ -95,7 +97,7 @@ var SFModels = SF = {
 		var evaluatedMap = {};
 		for(var sObjectName in modelExtensionMap) {
 			var model = modelExtensionMap[sObjectName];
-			evaluatedModel = {};
+			var evaluatedModel = {};
 			for(var key in model) {
 				if(typeof model[key] === 'string')
 					evaluatedModel[key] = eval(model[key]);
@@ -148,14 +150,12 @@ var SFModels = SF = {
 	// See createModelsForSObjects method for the typeFilter definition. If the typeFilter isn't used all the 
 	// salesforce object definitions are converted into ember models.
 	recordInverses(sObjectName, sObjectReader, cache, typeFilter) {
-		var relVisitor = { 
-			visit(rel, object, path, reader){
-				if(typeof rel.relationshipName === 'undefined' || typeof rel.childSObject === 'undefined' || cache.isReferencedByMultitypedReference(rel))
-					return;
-				if(typeFilter && !typeFilter(sObjectReader.completeMetas[rel.childSObject]))
-					return;
-				cache.logInverses(sObjectName, rel.relationshipName, rel.field)
-			}
+		var relVisitor = (rel, object, path, reader) => {
+			if(typeof rel.relationshipName === 'undefined' || typeof rel.childSObject === 'undefined' || cache.isReferencedByMultitypedReference(rel))
+				return;
+			if(typeFilter && !typeFilter(sObjectReader.completeMetas[rel.childSObject]))
+				return;
+			cache.logInverses(sObjectName, rel.relationshipName, rel.field)
 		};
 		
 		var obj = sObjectReader.completeMetas[sObjectName];
@@ -169,40 +169,38 @@ var SFModels = SF = {
 	// See createModelsForSObjects method for the typeFilter definition. If the typeFilter isn't used all the 
 	// salesforce object definitions are converted into ember models.
 	createFieldModelForSObject(modelExtension, sObjectName, sObjectReader, cache, typeFilter) {
-		var fieldVisitor = { 
-			visit(field, object, path, reader){
-				var fn = field.name;
-				var updateable = (field.updateable === 'true');
-				if(!updateable)
-					cache.logNonUpdateableField(sObjectName, fn)
-				if(field.type === 'reference') {
-					if(typeof field.referenceTo === 'string') {
-						var erefs = field.referenceTo;
-						if(typeFilter && !typeFilter(sObjectReader.completeMetas[erefs])) {
-							modelExtension[fn] = "DS.attr('string', {updateable : " + updateable + "})";
-							return;
-						}
-						if(field.custom == 'true')
-							erefs = SF.emberiseExtension(erefs);
-						var inverse = cache.getInverse(sObjectName, fn);
-						if(inverse != null)
-							modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : '" + inverse + "' })";
-						else
-							modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : null })";
-					}
-					else if(Array.isArray(field.referenceTo)){
-						cache.logMultitypedReferenceField(sObjectName, fn)
-						modelExtension[fn] = "DS.attr('string', { multiRef : true, updateable : " + updateable + " })";
-					}
-					else {
-						//cache.logMultitypedReferenceField(sObjectName, fn)
+		var fieldVisitor = (field, object, path, reader) => {
+			var fn = field.name;
+			var updateable = (field.updateable === 'true');
+			if(!updateable)
+				cache.logNonUpdateableField(sObjectName, fn)
+			if(field.type === 'reference') {
+				if(typeof field.referenceTo === 'string') {
+					var erefs = field.referenceTo;
+					if(typeFilter && !typeFilter(sObjectReader.completeMetas[erefs])) {
 						modelExtension[fn] = "DS.attr('string', {updateable : " + updateable + "})";
+						return;
 					}
+					if(field.custom == 'true')
+						erefs = SF.emberiseExtension(erefs);
+					var inverse = cache.getInverse(sObjectName, fn);
+					if(inverse != null)
+						modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : '" + inverse + "' })";
+					else
+						modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : null })";
 				}
-				else if(fn !== 'Id')
-					modelExtension[fn] = "DS.attr('" + SF.sforceToEmberTypeMap[field.type] + "', {updateable : " + updateable + "})";
-				console.log(sObjectReader.completeMetas.length + ' : field : ' + fn);
+				else if(Array.isArray(field.referenceTo)){
+					cache.logMultitypedReferenceField(sObjectName, fn)
+					modelExtension[fn] = "DS.attr('string', { multiRef : true, updateable : " + updateable + " })";
+				}
+				else {
+					//cache.logMultitypedReferenceField(sObjectName, fn)
+					modelExtension[fn] = "DS.attr('string', {updateable : " + updateable + "})";
+				}
 			}
+			else if(fn !== 'Id')
+				modelExtension[fn] = "DS.attr('" + SF.sforceToEmberTypeMap[field.type] + "', {updateable : " + updateable + "})";
+			console.log(sObjectReader.completeMetas.length + ' : field : ' + fn);
 		};
 		
 		var obj = sObjectReader.completeMetas[sObjectName];
@@ -216,18 +214,16 @@ var SFModels = SF = {
 	// See createModelsForSObjects method for the typeFilter definition. If the typeFilter isn't used all the 
 	// salesforce object definitions are converted into ember models.
 	createRelationshipModelForSObject(modelExtension, sObjectName, sObjectReader, cache, typeFilter) {
-		var relVisitor = { 
-				visit(rel, object, path, reader){
-					if(typeof rel.relationshipName === 'undefined' || typeof rel.childSObject === 'undefined' || cache.isReferencedByMultitypedReference(rel))
-						return;
-					if(typeFilter && !typeFilter(sObjectReader.completeMetas[rel.childSObject]))
-						return;
-					var rn = rel.relationshipName;
-					var econ = SF.emberiseExtension(rel.childSObject);
-					modelExtension[rn] = "DS.hasMany('" + econ + "', { async : true, inverse : '" + rel.field + "', })";
-					console.log('child rel : ' + rn);
-				}
-			};
+		var relVisitor = (rel, object, path, reader) => {
+			if(typeof rel.relationshipName === 'undefined' || typeof rel.childSObject === 'undefined' || cache.isReferencedByMultitypedReference(rel))
+				return;
+			if(typeFilter && !typeFilter(sObjectReader.completeMetas[rel.childSObject]))
+				return;
+			var rn = rel.relationshipName;
+			var econ = SF.emberiseExtension(rel.childSObject);
+			modelExtension[rn] = "DS.hasMany('" + econ + "', { async : true, inverse : '" + rel.field + "', })";
+			console.log('child rel : ' + rn);
+		};
 		
 		var obj = sObjectReader.completeMetas[sObjectName];
 		sObjectReader.shallowReadMetaChildRelationshipsAbr(obj, relVisitor);
@@ -267,7 +263,7 @@ var SFModels = SF = {
 	// In a soql select statement an array doesn't look like a serialised javascript array. This method 
 	// handles the conversion.
 	//
-	// [1,2,"hello world"] -> (1,2,"hello world")
+	// [1,2,"hello world"] => (1,2,"hello world")
 	toSoqlArray(array) {
 		var soqlAry = "(";
 		for(var i = 0; i < array.length; i++) {
@@ -328,7 +324,7 @@ var SFModels = SF = {
 	// sending to the server using the salesforce soap api i.e. sforce.connection.create/update
 	sfFormatSnapshot(snapshot, type) {
 		var sfName = SF.sfriseExtension(type.modelName);
-		var so = new sforce.SObject(sfName);
+		var so = new this.sforce.SObject(sfName);
 		if(snapshot.id != null)
 			so.Id = snapshot.id;
 		snapshot.eachAttribute((name, meta) =>{
@@ -352,7 +348,7 @@ var SFModels = SF = {
 		try {
 			var sfName = SF.sfriseExtension(type.modelName);
 			q = SF.createRootSoqlSelect(type, sfName, query);
-			sforce.connection.query(q, cbSuccess, cbErr);
+			this.sforce.connection.query(q, cbSuccess, cbErr);
 		} catch(e) {
 			console.log(q);
 			throw e;

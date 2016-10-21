@@ -146,8 +146,8 @@ var testSchema = function(mockSchema) {
 				
 				var whereSplit = selectString.substring(6, selectString.length).split(/\swhere\s/gim);
 				
-				t.ok(!whereSplit.length < 2, 'No where clause was found in: ' + selectString);
-				t.ok(!whereSplit.length > 2, 'Multiple where clauses were found in: ' + selectString);
+				t.ok(!(whereSplit.length < 2), 'No where clause was found in: ' + selectString);
+				t.ok(!(whereSplit.length > 2), 'Multiple where clauses were found in: ' + selectString);
 				
 				var beforeWhere = whereSplit[0];
 				var afterWhere = whereSplit[1];
@@ -223,8 +223,8 @@ test( 'SFModels.toSoqlArray()', function( t ) {
 });
 
 test( 'SFModels.formatPayload()', function( t ) {
-	Em.Inflector.inflector.irregular('someObjccc', 'someObjsccc')
-	var type = { modelName : 'someObjccc'};
+	Em.Inflector.inflector.irregular('some-objccc', 'some-objsccc')
+	var type = { modelName : 'some-objccc'};
 	var payload = {
 		records : {
 			Id : 'AbC000000000001XyZ',
@@ -246,7 +246,7 @@ test( 'SFModels.formatPayload()', function( t ) {
 		}
 	};
 	var expectedPl = {
-		someObjsccc : [
+		'some-objsccc' : [
 		    {
 		    	id : 'AbC000000000001XyZ',
 		    	relationshipA : ['1', '2', '3'],

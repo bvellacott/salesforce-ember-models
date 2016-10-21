@@ -1,7 +1,3 @@
-// import Ember from 'ember';
-// import DS from 'ember-data';
-// import SchemaReader from 'salesforce-schema-reader';
-// import DS from 'ember-data';
 import SchemaReader from 'salesforce-schema-reader';
 
 var SF; 
@@ -280,7 +276,7 @@ var SFModels = SF = {
 	// This method reformats a salesforce payload into an ember payload.
 	formatPayload(type, pl) {
 		var formattedPl = {};
-		var plural = Em.Inflector.inflector.pluralize(type.modelName);
+		var plural = Ember.Inflector.inflector.pluralize(type.modelName);
 		if(Array.isArray(pl.records)) {
 			for(var i = 0; i < pl.records.length; i++)
 				SF.formatRecord(pl.records[i]);

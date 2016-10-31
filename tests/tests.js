@@ -358,5 +358,3 @@ test( 'SFModels.factory.Cache', function( t ) {
 	t.ok(!cache.isReferencedByMultitypedReference({ childSObject : 'updateObj', field : 'updateField'}), 'A multityped relationship was falsely resolved');
 });
 
-// sforce.db.schema = houseSchema.sfSchema;
-

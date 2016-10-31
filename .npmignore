@@ -1,5 +1,9 @@
 /bower_components
-/dist
+
+dist/*
+dist/.*
+!dist/sf-models-node.js
+
 /tests
 /tmp
 **/.gitkeep

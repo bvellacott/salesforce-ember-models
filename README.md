@@ -1,5 +1,5 @@
 [![Build
-Status](https://travis-ci.org/bvellacott/ember-salesforce-adapter.svg?branch=master)](https://travis-ci.org/bvellacott/ember-salesforce-adapter)
+Status](https://travis-ci.org/bvellacott/salesforce-ember-models.svg?branch=master)](https://travis-ci.org/bvellacott/salesforce-ember-models)
 
-# ember-salesforce-adapter
+# salesforce-ember-models
 Dynamically creates ember models from a salesforce schema

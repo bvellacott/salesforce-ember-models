@@ -1,8 +1,6 @@
 import { houseSchema as schema, Snapshot, sforce } from 'sforce-mocks';
 
 SFModels.sforce = sforce;
-// var schema = mocks.houseSchema;
-// var Snapshot = mocks.Snapshot;
 
 var extend = (o1, o2) => {
 	if(!o1 || !o2 || typeof o1 !== 'object' || typeof o2 !== 'object')

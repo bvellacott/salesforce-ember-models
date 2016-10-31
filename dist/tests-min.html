@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salesforce schema reader tests [minified]</title>
+<!-- qunit style -->
+	<link rel="stylesheet" href="qunit/qunit.css"></link>
+
+</head>
+<body>
+<!-- Required qunit elements -->
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+<!-- Dependencies -->
+<script src="deps/jquery.js" ></script>
+<script src="deps/ember.js" ></script>
+<script src="deps/ember-data.js" ></script>
+
+<!-- qunit library -->
+<script src="qunit/qunit.js" ></script>
+
+<!-- The tested library -->
+<script src="sf-models-min.js" ></script>
+<script>SFModels.DS = DS;</script>
+
+<!-- The tests -->
+<script src="tests.js" ></script>
+</body>
+</html>

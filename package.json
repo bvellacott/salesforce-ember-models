@@ -1,6 +1,6 @@
 {
   "name": "salesforce-ember-models",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dynamically creates ember models from a salesforce schema",
   "main": "index.js",
   "directories": {

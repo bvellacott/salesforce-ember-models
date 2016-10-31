@@ -9,7 +9,7 @@
   },
   "scripts": {
     "serve": "broccoli serve",
-    "test": "node runTests.js"
+    "test": "phantomjs node_modules/qunit-phantomjs-runner/runner.js dist/tests.html"
   },
   "repository": "https://github.com/bvellacott/salesforce-ember-models",
   "engines": {
@@ -30,6 +30,7 @@
     "broccoli-watchify": "^1.0.0",
     "ember-cli": "^2.5.0",
     "qunit": "^0.9.1",
+    "qunit-phantomjs-runner": "^2.2.0",
     "sforce-mocks": "^1.0.1"
   },
   "dependencies": {

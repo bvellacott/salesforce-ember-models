@@ -4,7 +4,14 @@ SFModels.sforce = sforce;
 // var schema = mocks.houseSchema;
 // var Snapshot = mocks.Snapshot;
 
-var extend = Object.assign;
+var extend = (o1, o2) => {
+	if(!o1 || !o2 || typeof o1 !== 'object' || typeof o2 !== 'object')
+		return;
+	for(var key in o2)
+		if(o2.hasOwnProperty(key))
+			o1[key] = o2[key];
+	return o1;
+};
 
 var connection = {
 	describeGlobal() {

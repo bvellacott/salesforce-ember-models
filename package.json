@@ -2,6 +2,7 @@
   "name": "salesforce-ember-models",
   "version": "1.0.0",
   "description": "Dynamically creates ember models from a salesforce schema",
+  "main": "index.js",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -29,7 +30,7 @@
     "broccoli-watchify": "^1.0.0",
     "ember-cli": "^2.5.0",
     "qunit": "^0.9.1",
-    "sforce-mocks": "^1.0.0"
+    "sforce-mocks": "^1.0.1"
   },
   "dependencies": {
     "salesforce-schema-reader": "^1.0.2"

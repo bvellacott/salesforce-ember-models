@@ -1,8 +1,10 @@
 import SchemaReader from 'salesforce-schema-reader';
 
 var SF; 
-var SFModels = SF = { 
-	sforce: window.sforce ? window.sforce : undefined,
+var SFModels = SF = {
+	Ember: (window && window.Ember) ? window.Ember : undefined,
+	DS: undefined,
+	sforce: (window && window.sforce) ? window.sforce : undefined,
 	SchemaReader: SchemaReader,
 	// Constants and methods for salesforce custom entity ending handling and conversions
 	_sfRelExt : '__r',
@@ -14,14 +16,15 @@ var SFModels = SF = {
 	hasCustomSfNameExtension(name) { return SF.endsWith(name, SF._sfNameExt); },
 	hasCustomEmberRelationExtension(name) { return SF.endsWith(name, SF._emRelExt); },
 	hasCustomEmberNameExtension(name) { return SF.endsWith(name, SF._emNameExt); },
-	emberiseExtension(sfName) {
+	emberiseName(sfName) {
 		if(SF.hasCustomSfNameExtension(sfName))
-			return sfName.substring(0, sfName.length - SF._sfNameExt.length) + SF._emNameExt;
+			sfName = sfName.substring(0, sfName.length - SF._sfNameExt.length) + SF._emNameExt;
 		else if(SF.hasCustomSfRelationExtension(sfName))
-			return sfName.substring(0, sfName.length - SF._sfRelExt.length) + SF._emRelExt;
-		return sfName;
+			sfName = sfName.substring(0, sfName.length - SF._sfRelExt.length) + SF._emRelExt;
+		return this.Ember.String.dasherize(sfName);
 	},
-	sfriseExtension(emName) {
+	sfriseName(emName) {
+		emName = this.Ember.String.camelize(emName);
 		if(SF.hasCustomEmberNameExtension(emName))
 			return emName.substring(0, emName.length - SF._emNameExt.length) + SF._sfNameExt;
 		else if(SF.hasCustomEmberRelationExtension(emName))
@@ -29,22 +32,22 @@ var SFModels = SF = {
 		return emName;
 	},
 	emberiseRefs(refs) {
-		if(typeof refs === 'string') return SF.emberiseExtension(refs);
+		if(typeof refs === 'string') return SF.emberiseName(refs);
 		else if(Array.isArray(refs)) {
 			var emberRefs = [];
 			for(var i = 0; i < refs.length; i++)
-				emberRefs.push(SF.emberiseExtension(refs[i]));
+				emberRefs.push(SF.emberiseName(refs[i]));
 			return emberRefs;
 		}
 		else
 			return null;
 	},
 	sfriseRefs(refs) {
-		if(typeof refs === 'string') return SF.sfriseExtension(refs);
+		if(typeof refs === 'string') return SF.sfriseName(refs);
 		else if(Array.isArray(refs)) {
 			var sfRefs = [];
 			for(var i = 0; i < refs.length; i++)
-				sfRefs.push(SF.sfriseExtension(refs[i]));
+				sfRefs.push(SF.sfriseName(refs[i]));
 			return sfRefs;
 		}
 		else
@@ -82,7 +85,7 @@ var SFModels = SF = {
 	// For example if you only want to create a model for a salesforce Account sobject:
 	//
 	// typeFilter = function(obj) { return obj.name === 'Account'; }. If the typeFilter isn't used 
-    // all the salesforce object definitions are converted into ember models.
+  // all the salesforce object definitions are converted into ember models.
 	createModelsForSObjects(emberApp, sObjectMetaMap, sObjectReader, typeFilter) {
 		var modelExtensionMap = SF.createEmberModelDefinitions(sObjectMetaMap, sObjectReader, typeFilter);
 		SF.createModelsFromExtensionMap(emberApp, modelExtensionMap);
@@ -100,8 +103,9 @@ var SFModels = SF = {
 				else
 					evaluatedModel[key] = model[key];
 			}
-			var eon = SF.emberiseExtension(sObjectName);
-			emberApp[eon] = DS.Model.extend(evaluatedModel);
+			var eon = SF.emberiseName(sObjectName);
+			eon = this.Ember.String.dasherize(eon);
+			emberApp[eon] = this.DS.Model.extend(evaluatedModel);
 		}
 	},
 	// One of the main methods. Used to read the salesforce schema using the sObjectReader and create
@@ -174,28 +178,28 @@ var SFModels = SF = {
 				if(typeof field.referenceTo === 'string') {
 					var erefs = field.referenceTo;
 					if(typeFilter && !typeFilter(sObjectReader.completeMetas[erefs])) {
-						modelExtension[fn] = "DS.attr('string', {updateable : " + updateable + "})";
+						modelExtension[fn] = "this.DS.attr('string', {updateable : " + updateable + "})";
 						return;
 					}
 					if(field.custom == 'true')
-						erefs = SF.emberiseExtension(erefs);
+						erefs = SF.emberiseName(erefs);
 					var inverse = cache.getInverse(sObjectName, fn);
 					if(inverse != null)
-						modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : '" + inverse + "' })";
+						modelExtension[fn] = "this.DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : '" + inverse + "' })";
 					else
-						modelExtension[fn] = "DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : null })";
+						modelExtension[fn] = "this.DS.belongsTo('" + erefs + "', { async : true, updateable : " + updateable + ", inverse : null })";
 				}
 				else if(Array.isArray(field.referenceTo)){
 					cache.logMultitypedReferenceField(sObjectName, fn)
-					modelExtension[fn] = "DS.attr('string', { multiRef : true, updateable : " + updateable + " })";
+					modelExtension[fn] = "this.DS.attr('string', { multiRef : true, updateable : " + updateable + " })";
 				}
 				else {
 					//cache.logMultitypedReferenceField(sObjectName, fn)
-					modelExtension[fn] = "DS.attr('string', {updateable : " + updateable + "})";
+					modelExtension[fn] = "this.DS.attr('string', {updateable : " + updateable + "})";
 				}
 			}
 			else if(fn !== 'Id')
-				modelExtension[fn] = "DS.attr('" + SF.sforceToEmberTypeMap[field.type] + "', {updateable : " + updateable + "})";
+				modelExtension[fn] = "this.DS.attr('" + SF.sforceToEmberTypeMap[field.type] + "', {updateable : " + updateable + "})";
 			console.log(sObjectReader.completeMetas.length + ' : field : ' + fn);
 		};
 		
@@ -216,8 +220,8 @@ var SFModels = SF = {
 			if(typeFilter && !typeFilter(sObjectReader.completeMetas[rel.childSObject]))
 				return;
 			var rn = rel.relationshipName;
-			var econ = SF.emberiseExtension(rel.childSObject);
-			modelExtension[rn] = "DS.hasMany('" + econ + "', { async : true, inverse : '" + rel.field + "', })";
+			var econ = SF.emberiseName(rel.childSObject);
+			modelExtension[rn] = "this.DS.hasMany('" + econ + "', { async : true, inverse : '" + rel.field + "', })";
 			console.log('child rel : ' + rn);
 		};
 		
@@ -276,7 +280,8 @@ var SFModels = SF = {
 	// This method reformats a salesforce payload into an ember payload.
 	formatPayload(type, pl) {
 		var formattedPl = {};
-		var plural = Ember.Inflector.inflector.pluralize(type.modelName);
+		var plural = this.Ember.Inflector.inflector.pluralize(type.modelName);
+		plural = this.Ember.String.dasherize(plural);
 		if(Array.isArray(pl.records)) {
 			for(var i = 0; i < pl.records.length; i++)
 				SF.formatRecord(pl.records[i]);
@@ -319,7 +324,7 @@ var SFModels = SF = {
 	// This method formats an ember Snapshot object, into a javascript representation of an SObject, ready for
 	// sending to the server using the salesforce soap api i.e. sforce.connection.create/update
 	sfFormatSnapshot(snapshot, type) {
-		var sfName = SF.sfriseExtension(type.modelName);
+		var sfName = SF.sfriseName(type.modelName);
 		var so = new this.sforce.SObject(sfName);
 		if(snapshot.id != null)
 			so.Id = snapshot.id;
@@ -342,7 +347,7 @@ var SFModels = SF = {
 	query(store, type, query, cbSuccess, cbErr) {
 		var q = null;
 		try {
-			var sfName = SF.sfriseExtension(type.modelName);
+			var sfName = SF.sfriseName(type.modelName);
 			q = SF.createRootSoqlSelect(type, sfName, query);
 			this.sforce.connection.query(q, cbSuccess, cbErr);
 		} catch(e) {

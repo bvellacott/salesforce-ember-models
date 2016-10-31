@@ -8,16 +8,21 @@
 
 </head>
 <body>
-
 <!-- Required qunit elements -->
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
 
-<!-- The tested library -->
-<script src="sf-models-min.js" ></script>
+<!-- Dependencies -->
+<script src="deps/jquery.js" ></script>
+<script src="deps/ember.js" ></script>
+<script src="deps/ember-data.js" ></script>
 
 <!-- qunit library -->
 <script src="qunit/qunit.js" ></script>
+
+<!-- The tested library -->
+<script src="sf-models-min.js" ></script>
+<script>SFModels.DS = DS;</script>
 
 <!-- The tests -->
 <script src="tests.js" ></script>

@@ -45,8 +45,8 @@ testrunner.setup(
 
 // one code and tests file 
 testrunner.run({
-    deps: [{path: 'ember-data', namespace: "DS"}, 'mocks'/*{path: 'mocks', namespace: 'mocks'}*/],
+    // deps: [{path: 'ember-data', namespace: "DS"}, 'mocks'/*{path: 'mocks', namespace: 'mocks'}*/],
     // deps: {path: 'ember-data', namespace: "DS"},
-    code: { path: "dist/sf-models-node.js", namespace: 'SFModels'},
+    // code: { path: "dist/sf-models-node.js", namespace: 'SFModels'},
     tests: "tests/tests.js"
 }, function(){ console.log('done'); });

@@ -4,6 +4,8 @@ SFModels.sforce = sforce;
 // var schema = mocks.houseSchema;
 // var Snapshot = mocks.Snapshot;
 
+var extend = Object.assign;
+
 var connection = {
 	describeGlobal() {
 		return { getArray(){ return [
@@ -52,40 +54,40 @@ test( "SFModels.hasCustomEmberNameExtension()", function( t ) {
 	t.strictEqual( SFModels.hasCustomEmberNameExtension('someName'), false, "no ending" );
 });
 
-test( "SFModels.emberiseExtension()", function( t ) {
-	t.equal( SFModels.emberiseExtension('someName__c'), 'someNameccc', "Ending '__c' conversion to 'ccc'" );
-	t.equal( SFModels.emberiseExtension('someName__r'), 'someNamerrr', "Ending '__r' conversion to 'rrr'" );
-	t.equal( SFModels.emberiseExtension('someName__a'), 'someName__a', "Any other ending shouldn't be converted" );
+test( "SFModels.emberiseName()", function( t ) {
+	t.equal( SFModels.emberiseName('someName__c'), 'some-nameccc', "Ending '__c' conversion to 'ccc'" );
+	t.equal( SFModels.emberiseName('someName__r'), 'some-namerrr', "Ending '__r' conversion to 'rrr'" );
+	t.equal( SFModels.emberiseName('someName__a'), 'some-name--a', "Any other ending shouldn't be converted" );
 });
 
-test( "SFModels.sfriseExtension()", function( t ) {
-	t.equal( SFModels.sfriseExtension('someNameccc'), 'someName__c', "Ending 'ccc' conversion to '__c'" );
-	t.equal( SFModels.sfriseExtension('someNamerrr'), 'someName__r', "Ending 'rrr' conversion to '__r'" );
-	t.equal( SFModels.sfriseExtension('someNameaaa'), 'someNameaaa', "Any other ending shouldn't be converted" );
-});
-
-test( "SFModels.emberiseRefs()", function( t ) {
-	t.equal( SFModels.emberiseRefs('someName__c'), 'someNameccc', "Ending '__c' conversion to 'ccc'" );
-	t.equal( SFModels.emberiseRefs('someName__r'), 'someNamerrr', "Ending '__r' conversion to 'rrr'" );
-	t.equal( SFModels.emberiseRefs('someName__a'), 'someName__a', "Any other ending shouldn't be converted" );
-});
-
-test( "SFModels.sfriseRefs()", function( t ) {
-	t.equal( SFModels.sfriseRefs('someNameccc'), 'someName__c', "Ending 'ccc' conversion to '__c'" );
-	t.equal( SFModels.sfriseRefs('someNamerrr'), 'someName__r', "Ending 'rrr' conversion to '__r'" );
-	t.equal( SFModels.sfriseRefs('someNameaaa'), 'someNameaaa', "Any other ending shouldn't be converted" );
+test( "SFModels.sfriseName()", function( t ) {
+	t.equal( SFModels.sfriseName('some-nameccc'), 'someName__c', "Ending 'ccc' conversion to '__c'" );
+	t.equal( SFModels.sfriseName('some-namerrr'), 'someName__r', "Ending 'rrr' conversion to '__r'" );
+	t.equal( SFModels.sfriseName('some-nameaaa'), 'someNameaaa', "Any other ending shouldn't be converted" );
 });
 
 test( "SFModels.emberiseRefs()", function( t ) {
-	t.deepEqual( SFModels.emberiseRefs(['someName__c', 'someName__r', 'someName__a']), ['someNameccc', 'someNamerrr', 'someName__a'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
-	t.deepEqual( SFModels.emberiseRefs(['someName__r', 'someName__a', 'someName__c']), ['someNamerrr', 'someName__a', 'someNameccc'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
-	t.deepEqual( SFModels.emberiseRefs(['someName__a', 'someName__c', 'someName__r']), ['someName__a', 'someNameccc', 'someNamerrr'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+	t.equal( SFModels.emberiseRefs('someName__c'), 'some-nameccc', "Ending '__c' conversion to 'ccc'" );
+	t.equal( SFModels.emberiseRefs('someName__r'), 'some-namerrr', "Ending '__r' conversion to 'rrr'" );
+	t.equal( SFModels.emberiseRefs('someName__a'), 'some-name--a', "Any other ending shouldn't be converted" );
 });
 
 test( "SFModels.sfriseRefs()", function( t ) {
-	t.deepEqual( SFModels.sfriseRefs(['someNameccc', 'someNamerrr', 'someNameaaa']), ['someName__c', 'someName__r', 'someNameaaa'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
-	t.deepEqual( SFModels.sfriseRefs(['someNamerrr', 'someNameaaa', 'someNameccc']), ['someName__r', 'someNameaaa', 'someName__c'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
-	t.deepEqual( SFModels.sfriseRefs(['someNameaaa', 'someNameccc', 'someNamerrr']), ['someNameaaa', 'someName__c', 'someName__r'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
+	t.equal( SFModels.sfriseRefs('some-nameccc'), 'someName__c', "Ending 'ccc' conversion to '__c'" );
+	t.equal( SFModels.sfriseRefs('some-namerrr'), 'someName__r', "Ending 'rrr' conversion to '__r'" );
+	t.equal( SFModels.sfriseRefs('some-nameaaa'), 'someNameaaa', "Any other ending shouldn't be converted" );
+});
+
+test( "SFModels.emberiseRefs()", function( t ) {
+	t.deepEqual( SFModels.emberiseRefs(['someName__c', 'someName__r', 'someName__a']), ['some-nameccc', 'some-namerrr', 'some-name--a'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+	t.deepEqual( SFModels.emberiseRefs(['someName__r', 'someName__a', 'someName__c']), ['some-namerrr', 'some-name--a', 'some-nameccc'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+	t.deepEqual( SFModels.emberiseRefs(['someName__a', 'someName__c', 'someName__r']), ['some-name--a', 'some-nameccc', 'some-namerrr'], "Ending '__c' conversion to 'ccc' and '__r' conversion to 'rrr'" );
+});
+
+test( "SFModels.sfriseRefs()", function( t ) {
+	t.deepEqual( SFModels.sfriseRefs(['some-nameccc', 'some-namerrr', 'some-nameaaa']), ['someName__c', 'someName__r', 'someNameaaa'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
+	t.deepEqual( SFModels.sfriseRefs(['some-namerrr', 'some-nameaaa', 'some-nameccc']), ['someName__r', 'someNameaaa', 'someName__c'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
+	t.deepEqual( SFModels.sfriseRefs(['some-nameaaa', 'some-nameccc', 'some-namerrr']), ['someNameaaa', 'someName__c', 'someName__r'], "Ending 'ccc' conversion to '__c' and 'rrr' conversion to '__r'" );
 });	
 
 var mockSchemaReader = setup();
@@ -185,7 +187,7 @@ var testSchema = function(mockSchema) {
 				var modelSSs = mockSchema.snapshots[emberModelName];
 				var expectedSOs = mockSchema.formattedSObjects[emberModelName];
 				for(var i = 0; i < modelSSs.length; i++) {
-					var mockInstance = $.extend({ _model : emberModel }, modelSSs[i]);
+					var mockInstance = extend({ _model : emberModel }, modelSSs[i]);
 					var snapshot = new Snapshot(mockInstance);
 					var sfObject = SFModels.sfFormatSnapshot(snapshot, emberModel);
 					
@@ -235,10 +237,10 @@ test( 'SFModels.formatPayload()', function( t ) {
 					{ Id : '3', rubbish : 'rubbish'},
 				]
 			},
-			relationshipB : {
+			relationshipB__c : {
 				records : { Id : '4', rubbish : 'rubbish'}
 			},
-			fieldA : 'somethingA',
+			fieldA__c : 'somethingA',
 			Fieldb : true,
 			fiEldC : null,
 			fieldD : 123,
@@ -248,10 +250,10 @@ test( 'SFModels.formatPayload()', function( t ) {
 	var expectedPl = {
 		'some-objsccc' : [
 		    {
-		    	id : 'AbC000000000001XyZ',
-		    	relationshipA : ['1', '2', '3'],
-		    	relationshipB : ['4'],
-				fieldA : 'somethingA',
+	    	id : 'AbC000000000001XyZ',
+	    	relationshipA : ['1', '2', '3'],
+	    	relationshipB__c : ['4'],
+				fieldA__c : 'somethingA',
 				Fieldb : true,
 				fiEldC : null,
 				fieldD : 123,
@@ -306,7 +308,7 @@ test( 'SFModels.formatPayload()', function( t ) {
 		]
 	};
 	expectedPl = {
-		StandardObjs : [
+		'standard-objs' : [
    		    {
 		    	id : 'AbC000000000001XyZ', 
 		    	relationshipA : ['1', '2', '3'],

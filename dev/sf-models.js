@@ -331,7 +331,7 @@ var SFModels = SF = {
 		snapshot.eachAttribute((name, meta) =>{
 			var metaOptions = type.metaForProperty(name).options;
 			if(metaOptions.updateable)
-				so[name] = snapshot.attr(name);
+				so[name] = this.serialisePrimitive(snapshot.attr(name));
 		});	
 		snapshot.eachRelationship((name, meta) => {
 			if(meta.kind === 'belongsTo') {
@@ -341,6 +341,11 @@ var SFModels = SF = {
 			}
 		});
 		return so;
+	},
+	serialisePrimitive(primitive) {
+		if(primitive instanceof Date)
+			return primitive.toISOString();
+		return primitive;
 	},
 	// This is the general query method used to execute a soap api query to a salesforce org.
 	// See: sforce.connection.query(q, cbSuccess, cbErr);

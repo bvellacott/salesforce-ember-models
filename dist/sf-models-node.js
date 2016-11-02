@@ -296,12 +296,14 @@ var SFModels = SF = {
 	// This method formats an ember Snapshot object, into a javascript representation of an SObject, ready for
 	// sending to the server using the salesforce soap api i.e. sforce.connection.create/update
 	sfFormatSnapshot: function sfFormatSnapshot(snapshot, type) {
+		var _this = this;
+
 		var sfName = SF.sfriseName(type.modelName);
 		var so = new this.sforce.SObject(sfName);
 		if (snapshot.id != null) so.Id = snapshot.id;
 		snapshot.eachAttribute(function (name, meta) {
 			var metaOptions = type.metaForProperty(name).options;
-			if (metaOptions.updateable) so[name] = snapshot.attr(name);
+			if (metaOptions.updateable) so[name] = _this.serialisePrimitive(snapshot.attr(name));
 		});
 		snapshot.eachRelationship(function (name, meta) {
 			if (meta.kind === 'belongsTo') {
@@ -310,6 +312,10 @@ var SFModels = SF = {
 			}
 		});
 		return so;
+	},
+	serialisePrimitive: function serialisePrimitive(primitive) {
+		if (primitive instanceof Date) return primitive.toISOString();
+		return primitive;
 	},
 	// This is the general query method used to execute a soap api query to a salesforce org.
 	// See: sforce.connection.query(q, cbSuccess, cbErr);

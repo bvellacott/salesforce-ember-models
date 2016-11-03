@@ -264,6 +264,8 @@ var SFModels = SF = {
 		if (Array.isArray(pl.records)) {
 			for (var i = 0; i < pl.records.length; i++) SF.formatRecord(pl.records[i]);
 			formattedPl[plural] = pl.records;
+		} else if (pl.size === 0) {
+			formattedPl[plural] = [];
 		} else {
 			SF.formatRecord(pl.records);
 			formattedPl[plural] = [pl.records];

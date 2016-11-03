@@ -340,6 +340,18 @@ test( 'SFModels.formatPayload()', function( t ) {
 	formattedPl = SFModels.formatPayload(type, payload);
 	
 	t.deepEqual(formattedPl, expectedPl, 'The payload wasn\'t formatted correctly');
+
+	type = { modelName : 'StandardObj'};
+	payload = {
+		size: 0
+	};
+	expectedPl = {
+		'standard-objs' : []
+	};
+	
+	formattedPl = SFModels.formatPayload(type, payload);
+	
+	t.deepEqual(formattedPl, expectedPl, 'The empty payload wasn\'t formatted correctly');
 });
 
 
